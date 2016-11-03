@@ -1,0 +1,6 @@
+Google research on Server Push:
+https://docs.google.com/document/d/1K0NykTXBbbbTlv60t5MyJvXjqKGsCVNYHyLEXIxYMv0/edit#heading=h.xn78w1xy5jqo
+
+GoogleChrome h2 manifest builder:
+https://github.com/GoogleChrome/http2-push-manifest
+

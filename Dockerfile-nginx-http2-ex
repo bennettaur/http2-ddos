@@ -1,4 +1,4 @@
-FROM bennettaur/docker-nginx-http2
+FROM bennettaur/nginx-http2
 
 COPY ./content/securitycompass.com /usr/share/nginx/html
 COPY ./configs/nginx/nginx.conf /etc/nginx/nginx.conf

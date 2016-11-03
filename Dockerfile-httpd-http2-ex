@@ -1,4 +1,4 @@
-FROM bennettaur/docker-httpd-http2
+FROM bennettaur/httpd-http2
 
 COPY ./content/securitycompass.com /usr/local/apache2/htdocs/
 

@@ -1,4 +1,5 @@
 hyperframe
 h2
 tornado
+enum34
 # git+https://github.com/bdarnell/tornado_http2.git

@@ -13,10 +13,10 @@ from tornado.ioloop import IOLoop
 __author__ = 'bennettaur'
 
 @gen.coroutine
-def test_no_server_push(io_loop, host):
+def test_no_server_push(io_loop, host, port):
     c = H2Client(io_loop=io_loop)
 
-    yield c.connect(host, 8443)
+    yield c.connect(host, port)
     print("Disabling Server Push")
     yield c.update_settings({SettingsFrame.ENABLE_PUSH: 0})
 
@@ -36,10 +36,10 @@ def test_no_server_push(io_loop, host):
     c.close_connection()
 
 @gen.coroutine
-def test_server_push(io_loop, host):
+def test_server_push(io_loop, host, port):
     c = H2Client(io_loop=io_loop)
 
-    yield c.connect(host, 8443)
+    yield c.connect(host, port)
 
     print("Sending request with Server Push")
     now = time.time()
@@ -61,15 +61,16 @@ def test_server_push(io_loop, host):
 
 
 @gen.coroutine
-def run_tests(io_loop, host):
-    yield test_no_server_push(io_loop=io_loop, host=host)
-    yield test_server_push(io_loop=io_loop, host=host)
+def run_tests(io_loop, host, port):
+    yield test_no_server_push(io_loop=io_loop, host=host, port=port)
+    yield test_server_push(io_loop=io_loop, host=host, port=port)
     io_loop.stop()
 
 
 host = sys.argv[1]
+port = int(sys.argv[2])
 io_loop = IOLoop.current()
 
-io_loop.add_callback(run_tests, io_loop=io_loop, host=host)
+io_loop.add_callback(run_tests, io_loop=io_loop, host=host, port=port)
 
 io_loop.start()

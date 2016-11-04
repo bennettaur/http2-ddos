@@ -62,8 +62,8 @@ def test_server_push(io_loop, host):
 
 @gen.coroutine
 def run_tests(io_loop, host):
-    yield test_no_server_push(io_loop=io_loop, host)
-    yield test_server_push(io_loop=io_loop, host)
+    yield test_no_server_push(io_loop=io_loop, host=host)
+    yield test_server_push(io_loop=io_loop, host=host)
     io_loop.stop()
 
 

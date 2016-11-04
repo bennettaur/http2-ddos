@@ -8,7 +8,7 @@ tmux split-window -v
 tmux select-pane -t 1
 tmux send-keys "nload" C-m
 tmux select-pane -t 0
-tmux send-keys "docker stats dds" C-m
+tmux send-keys "docker stats $1" C-m
 tmux select-pane -t 1
 tmux send-keys C-Right
 

@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import sys
 import time
 
 from hyperframe.frame import SettingsFrame
@@ -12,10 +13,10 @@ from tornado.ioloop import IOLoop
 __author__ = 'bennettaur'
 
 @gen.coroutine
-def test_no_server_push(io_loop):
+def test_no_server_push(io_loop, host):
     c = H2Client(io_loop=io_loop)
 
-    yield c.connect('localhost', 8443)
+    yield c.connect(host, 8443)
     print("Disabling Server Push")
     yield c.update_settings({SettingsFrame.ENABLE_PUSH: 0})
 
@@ -35,10 +36,10 @@ def test_no_server_push(io_loop):
     c.close_connection()
 
 @gen.coroutine
-def test_server_push(io_loop):
+def test_server_push(io_loop, host):
     c = H2Client(io_loop=io_loop)
 
-    yield c.connect('localhost', 8443)
+    yield c.connect(host, 8443)
 
     print("Sending request with Server Push")
     now = time.time()
@@ -60,14 +61,15 @@ def test_server_push(io_loop):
 
 
 @gen.coroutine
-def run_tests(io_loop):
-    yield test_no_server_push(io_loop=io_loop)
-    yield test_server_push(io_loop=io_loop)
+def run_tests(io_loop, host):
+    yield test_no_server_push(io_loop=io_loop, host)
+    yield test_server_push(io_loop=io_loop, host)
     io_loop.stop()
 
 
+host = sys.argv[1]
 io_loop = IOLoop.current()
 
-io_loop.add_callback(run_tests, io_loop=io_loop)
+io_loop.add_callback(run_tests, io_loop=io_loop, host=host)
 
 io_loop.start()

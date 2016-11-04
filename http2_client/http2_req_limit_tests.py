@@ -26,13 +26,14 @@ __author__ = 'bennettaur'
 
 class RequestHTTP2TestRunner(object):
 
-    def __init__(self, target_list, rate, concurrency, workers, port):
+    def __init__(self, target_list, rate, concurrency, workers, host, port):
         self.io_loop = IOLoop()
         self.io_loop.make_current()
         self.target_list_iterator = self.make_target_list_iterator(target_list)
         self.rate = rate
         self.concurrency = concurrency
         self.workers = workers
+        self.host = host
         self.port = int(port)
 
         self.queue = queues.Queue()
@@ -68,7 +69,7 @@ class RequestHTTP2TestRunner(object):
         self.connection = H2Client(io_loop=self.io_loop)
 
     def create_connection(self):
-        return self.connection.connect('localhost', self.port)
+        return self.connection.connect(self.host, self.port)
 
     def clean_up(self):
         self.connection.close_connection()
@@ -225,7 +226,7 @@ class RequestHTTP11TestRunner(RequestHTTP2TestRunner):
             self.status_codes[result.code] = 1
 
     def make_target_list_iterator(self, target_list):
-        return itertools.cycle("https://{}:{}{}".format("localhost", self.port, target) for target in target_list)
+        return itertools.cycle("https://{}:{}{}".format(self.host, self.port, target) for target in target_list)
 
     def make_request(self, target):
         return self.connection.fetch(target, ssl_options=self.ssl_context, raise_error=False)
@@ -243,7 +244,7 @@ def handle_terminate(test_runner, signalnum, frame):
     test_runner.io_loop.add_callback_from_signal(test_runner.stop)
 
 
-def run_tests(port, rate, concurrency, workers, file_path, http_version):
+def run_tests(port, rate, concurrency, workers, file_path, host, http_version):
     target_list = [
         '/'
     ]
@@ -251,9 +252,9 @@ def run_tests(port, rate, concurrency, workers, file_path, http_version):
 
     runner = None
     if http_version == 1:
-        runner = RequestHTTP11TestRunner(target_list, rate, concurrency, workers, port)
+        runner = RequestHTTP11TestRunner(target_list, rate, concurrency, workers, host, port)
     elif http_version == 2:
-        runner = RequestHTTP2TestRunner(target_list, rate, concurrency, workers, port)
+        runner = RequestHTTP2TestRunner(target_list, rate, concurrency, workers, host, port)
 
     handler = functools.partial(handle_terminate, runner)
     signal.signal(signal.SIGINT, handler)
@@ -278,6 +279,7 @@ if __name__ == "__main__":
     parser.add_argument("-f", dest="file_path")
     parser.add_argument("-v", dest="http_version", type=int, choices=[1, 2])
     parser.add_argument("-l", dest="disable_logging", action="store_true", default=False)
+    parser.add_argument("-t", dest="host")
 
     args = parser.parse_args()
 
@@ -290,5 +292,6 @@ if __name__ == "__main__":
         concurrency=args.concurrency,
         workers=args.workers,
         file_path=args.file_path,
+        host=args.host,
         http_version=args.http_version
     )

@@ -234,8 +234,7 @@ class RequestHTTP11TestRunner(RequestHTTP2TestRunner):
 
 def build_target_list(file_path):
     with open(file_path) as target_file:
-        targets = json.load(target_file)
-        target_list = list(targets)
+        target_list = list(target.strip() for target in target_file)
 
     return target_list
 

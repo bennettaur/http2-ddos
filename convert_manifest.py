@@ -1,5 +1,5 @@
 import json
-improt sys
+import sys
 
 location_path = "/index.html"
 

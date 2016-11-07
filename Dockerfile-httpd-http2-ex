@@ -1,6 +1,6 @@
 FROM bennettaur/httpd-http2
 
-COPY ./content/securitycompass.com /usr/local/apache2/htdocs/
+COPY ./content/website1 /usr/local/apache2/htdocs/
 
 COPY ./configs/apache2/httpd.conf /usr/local/apache2/conf/httpd.conf
 COPY ./configs/apache2/*.conf /usr/local/apache2/conf/extra/
@@ -8,4 +8,4 @@ COPY ./configs/apache2/*.conf /usr/local/apache2/conf/extra/
 COPY ./configs/server.crt /usr/local/apache2/conf/server.crt
 COPY ./configs/server.key /usr/local/apache2/conf/server.key
 
-EXPOSE 443 444 445 446
+EXPOSE 443

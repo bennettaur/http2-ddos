@@ -1,6 +1,6 @@
 FROM bennettaur/nginx-http2
 
-COPY ./content/securitycompass.com /usr/share/nginx/html
+COPY ./content/website1 /usr/share/nginx/html
 COPY ./configs/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./configs/nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY ./configs/server.crt /etc/nginx/server.crt

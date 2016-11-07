@@ -4,7 +4,6 @@ import argparse
 import datetime
 import functools
 import itertools
-import json
 import logging
 import signal
 import ssl
@@ -271,14 +270,14 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-r", dest="rate", type=int)
-    parser.add_argument("-p", dest="port", type=int)
-    parser.add_argument("-w", dest="workers", type=int, default=100)
-    parser.add_argument("-c", dest="concurrency", type=int, default=1)
-    parser.add_argument("-f", dest="file_path")
-    parser.add_argument("-v", dest="http_version", type=int, choices=[1, 2])
-    parser.add_argument("-l", dest="disable_logging", action="store_true", default=False)
-    parser.add_argument("-t", dest="host")
+    parser.add_argument("-r", dest="rate", type=int, help="The rate at which requests will attempted to be sent at")
+    parser.add_argument("-p", dest="port", type=int, help="Target Port to connect to")
+    parser.add_argument("-w", dest="workers", type=int, default=100, help="The number of concurrent workers to use")
+    parser.add_argument("-c", dest="concurrency", type=int, default=1, help="The number of concurrent requests that each worker will try to make")
+    parser.add_argument("-f", dest="file_path", help="Path to a line-separated file of assets to request")
+    parser.add_argument("-v", dest="http_version", type=int, choices=[1, 2], help="Which version of HTTP to use")
+    parser.add_argument("-l", dest="disable_logging", action="store_true", default=False, help="Disable logging each asset being requested and the responses")
+    parser.add_argument("-t", dest="host", help="The target host to connect to")
 
     args = parser.parse_args()
 

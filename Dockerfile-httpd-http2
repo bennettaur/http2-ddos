@@ -123,13 +123,6 @@ RUN wget -O httpd.tar.bz2 "$HTTPD_BZ2_URL" \
 	&& make && make install \
 	&& apt-get purge -y --auto-remove $buildDeps
 
-RUN wget https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz \
-	&& tar -zxf Python-2.7.11.tgz \
-	&& cd Python-2.7.11/ \
-	&& ./configure \
-	&& make \
-	&& make install
-
 COPY ./configs/apache2/mod_evasive24.c "$HTTPD_PREFIX"/mod_evasive24.c
 RUN /usr/local/apache2/bin/apxs -cia "$HTTPD_PREFIX"/mod_evasive24.c
 

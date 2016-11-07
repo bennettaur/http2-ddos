@@ -1,61 +1,11 @@
-FROM debian:jessie
+FROM ubuntu:xenial
 
-# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-#RUN groupadd -r www-data && useradd -r --create-home -g www-data www-data
-
-ENV HTTPD_PREFIX /usr/local/apache2
-ENV PATH $HTTPD_PREFIX/bin:$PATH
-RUN mkdir -p "$HTTPD_PREFIX" \
-	&& chown www-data:www-data "$HTTPD_PREFIX"
-WORKDIR $HTTPD_PREFIX
-
-# install httpd runtime dependencies
-# https://httpd.apache.org/docs/2.4/install.html#requirements
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends \
-		libapr1 \
-		libaprutil1 \
-		libaprutil1-ldap \
-		libapr1-dev \
-		libaprutil1-dev \
-		libpcre++0 \
-		libssl1.0.0 \
-		libxml2-dev \
-	&& rm -r /var/lib/apt/lists/*
-
-ENV HTTPD_VERSION 2.4.23
-ENV HTTPD_SHA1 5101be34ac4a509b245adb70a56690a84fcc4e7f
-
-# https://issues.apache.org/jira/browse/INFRA-8753?focusedCommentId=14735394#comment-14735394
-ENV HTTPD_BZ2_URL https://www.apache.org/dyn/closer.cgi?action=download&filename=httpd/httpd-$HTTPD_VERSION.tar.bz2
-# not all the mirrors actually carry the .asc files :'(
-ENV HTTPD_ASC_URL https://www.apache.org/dist/httpd/httpd-$HTTPD_VERSION.tar.bz2.asc
-
-# Disable SSLv2
-ENV CPPFLAGS "-DOPENSSL_NO_SSL2=1"
-
-# see https://httpd.apache.org/docs/2.4/install.html#requirements
-RUN set -x \
-	&& buildDeps=' \
-		bzip2 \
-		ca-certificates \
-		gcc \
-		libpcre++-dev \
-		make \
-		wget \
-		pkg-config \
-		unzip \
-		libtool \
-		autoconf \
-		automake \
-		make \
-	' \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends $buildDeps \
-	&& rm -r /var/lib/apt/lists/*
-
-# Install a newer OpenSSL
-RUN wget https://www.openssl.org/source/openssl-1.0.2j.tar.gz \
+    && apt-get install -y --no-install-recommends \
+        wget \
+        build-essential \
+        ca-certificates \
+    && wget https://www.openssl.org/source/openssl-1.0.2j.tar.gz \
 	&& tar -xvzf openssl-1.0.2j.tar.gz \
 	&& cd openssl-1.0.2j \
 	&& ./config \
@@ -67,18 +17,15 @@ RUN wget https://www.openssl.org/source/openssl-1.0.2j.tar.gz \
 		--prefix=/usr/local \
 		--openssldir=/usr/local/ssl \
 	&& make clean \
-	&& make && make install \
-	&& cd .. 
-
-RUN wget https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz \
-	&& tar -zxf Python-2.7.11.tgz \
-	&& cd Python-2.7.11/ \
-	&& ./configure \
 	&& make \
-	&& make install
-
-RUN apt-get purge -y --auto-remove $buildDeps
+	&& make install \
+    && apt-get install -y \
+    	python \
+    	python-pip \
+    && pip install -U pip
 
 COPY ./http2_client ./
 
-CMD ["python"]
+RUN pip install -r dependencies.txt
+
+ENTRYPOINT ["/bin/bash"]

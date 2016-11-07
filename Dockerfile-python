@@ -24,7 +24,9 @@ RUN apt-get update \
     	python-pip \
     && pip install -U pip
 
-COPY ./http2_client ./
+COPY ./http2_client /http2_client
+
+WORKDIR /http2_client
 
 RUN pip install -r dependencies.txt
 
